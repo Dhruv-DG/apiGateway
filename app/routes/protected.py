@@ -1,9 +1,15 @@
 from fastapi import APIRouter, Depends
 from app.auth.dependency import get_current_user
-from app.models.user import User
+from app.api_keys.dependency import get_user_from_api_key
 
 router = APIRouter()
 
 @router.get("/data")
-def protected_data(user: User = Depends(get_current_user)):
-    return {"message": f"Hello {user.email}"}
+def protected_data(
+    user = Depends(get_current_user),
+    api_user_id = Depends(get_user_from_api_key)
+):
+    if user:
+        return {"auth": "jwt", "user_id": user.id}
+    if api_user_id:
+        return {"auth": "api_key", "user_id": api_user_id}
