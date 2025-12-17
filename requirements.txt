@@ -1,0 +1,16 @@
+fastapi==0.110.0
+uvicorn==0.29.0
+
+# Database
+sqlalchemy==2.0.29
+psycopg2-binary==2.9.9
+
+# Auth & Security
+python-jose==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Cache / Rate limiting
+redis==5.0.3
+
+# Env config
+python-dotenv==1.0.1
