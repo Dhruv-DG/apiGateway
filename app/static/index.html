@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>API Gateway Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+
+    <h1>API Gateway</h1>
+
+    <!-- HOME ACTIONS -->
+    <div id="home-actions">
+      <button onclick="showLogin()">Login</button>
+      <button onclick="showRegister()">Register</button>
+      <button onclick="showAdmin()">Admin Panel</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login-box" class="box hidden">
+      <h2>Login</h2>
+      <input id="login-email" type="email" placeholder="Email" />
+      <input id="login-password" type="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+      <p id="login-status"></p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="register-box" class="box hidden">
+      <h2>Register</h2>
+      <input id="register-email" type="email" placeholder="Email" />
+      <input id="register-password" type="password" placeholder="Password" />
+      <button onclick="register()">Register</button>
+      <p id="register-status"></p>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="box hidden">
+      <h2>Dashboard</h2>
+
+      <h3>Protected API</h3>
+      <input id="api-key-input" placeholder="Optional API Key" />
+      <button onclick="callProtected()">Call /protected/data</button>
+      <pre id="protected-result"></pre>
+
+      <h3>API Keys</h3>
+      <button onclick="createApiKey()">Create API Key</button>
+      <pre id="api-key-result"></pre>
+
+      <h3>Analytics</h3>
+      <button onclick="loadAnalytics()">Refresh</button>
+      <pre id="analytics-result"></pre>
+
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="admin-box" class="box hidden">
+      <h2>Admin Panel</h2>
+      <p>Admin-only role management (API-based)</p>
+      <p>Use <code>/admin/users/{id}/role</code></p>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

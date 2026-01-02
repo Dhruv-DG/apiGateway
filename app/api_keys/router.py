@@ -15,11 +15,12 @@ def get_db():
 
 @router.post("/create")
 def create_key(
-    user = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user = Depends(get_current_user)
 ):
     if not user:
         raise HTTPException(status_code=401, detail="Authentication required")
 
     key = create_api_key(db, user.id)
     return {"api_key": key}
+

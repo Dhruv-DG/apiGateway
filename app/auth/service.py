@@ -14,5 +14,9 @@ def authenticate_user(db: Session, email: str, password: str):
     user = db.query(User).filter(User.email == email).first()
     if not user or not verify_password(password, user.hashed_password):
         return None
-    token = create_access_token({"sub": str(user.id)})
+
+    token = create_access_token({
+        "sub": str(user.id),
+        "role": user.role
+    })
     return token

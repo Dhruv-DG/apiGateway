@@ -1,33 +1,43 @@
 import time
 from app.utils.redis_client import redis_client
 
-ENDPOINT_LIMITS = {
-    "/auth/login": 10,
-    "/keys/create": 5,
-    "/protected/data": 60
+ROLE_LIMITS = {
+    "free": (60, 60),
+    "pro": (300, 60),
+    "admin": (1000, 60)
 }
 
-WINDOW_SIZE = 60
+def get_limit(path: str):
+    for prefix, rule in LIMITS.items():
+        if path.startswith(prefix):
+            return rule
+    return (60, 60)
 
-def is_allowed(identifier: str, path: str = "") -> bool:
+
+def is_allowed(identifier: str, path: str,  role: str = "free") -> bool:
     if redis_client is None:
-        return True
-
-    limit = ENDPOINT_LIMITS.get(path, 100)
+        return True  # fail-open
 
     try:
+        limit, window = ROLE_LIMITS.get(role, ROLE_LIMITS["free"])
+
         key = f"rate:{identifier}:{path}"
         now = int(time.time())
 
-        redis_client.zremrangebyscore(key, 0, now - WINDOW_SIZE)
-        count = redis_client.zcard(key)
+        with redis_client.pipeline(transaction=True) as pipe:
+            pipe.zremrangebyscore(key, 0, now - window)
+            pipe.zcard(key)
+            results = pipe.execute()
 
-        if count >= limit:
-            return False
+            count = results[1]
+            if count >= limit:
+                return False
 
-        redis_client.zadd(key, {now: now})
-        redis_client.expire(key, WINDOW_SIZE)
+            pipe.zadd(key, {now: now})
+            pipe.expire(key, window)
+            pipe.execute()
+
         return True
+
     except Exception:
         return True
-
